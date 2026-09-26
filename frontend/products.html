@@ -7,81 +7,243 @@
 <link rel="stylesheet" href="style.css"/>
 </head>
 <body>
+
 <aside class="sidebar">
   <div class="sidebar-logo"><div class="logo-mark"><div class="logo-icon">📦</div><div class="logo-text">Stock<span>Sense</span></div></div></div>
   <div class="nav-section-label">Main</div>
   <a href="dashboard.html" class="nav-item"><span class="nav-icon">📊</span> Dashboard</a>
-  <a href="products.html" class="nav-item active"><span class="nav-icon">📦</span> Products</a>
+  <a href="products.html"  class="nav-item active"><span class="nav-icon">📦</span> Products</a>
   <div class="nav-section-label">Operations</div>
-  <a href="receipts.html" class="nav-item"><span class="nav-icon">📥</span> Receipts</a>
+  <a href="receipts.html"   class="nav-item"><span class="nav-icon">📥</span> Receipts</a>
   <a href="deliveries.html" class="nav-item"><span class="nav-icon">📤</span> Deliveries</a>
-  <a href="transfers.html" class="nav-item"><span class="nav-icon">🔄</span> Transfers</a>
-  <a href="adjustments.html" class="nav-item"><span class="nav-icon">⚖️</span> Adjustments</a>
+  <a href="transfers.html"  class="nav-item"><span class="nav-icon">🔄</span> Transfers</a>
+  <a href="adjustments.html"class="nav-item"><span class="nav-icon">⚖️</span> Adjustments</a>
   <div class="nav-section-label">Reports</div>
   <a href="#" class="nav-item"><span class="nav-icon">📈</span> Stock Ledger</a>
   <a href="#" class="nav-item"><span class="nav-icon">⚙️</span> Settings</a>
   <div class="sidebar-bottom">
-    <div class="user-pill" onclick="logout()"><div class="user-avatar" id="user-avatar">U</div><div><div class="user-name" id="user-name">User</div><div class="user-role">Sign out</div></div></div>
+    <div class="user-pill" onclick="logout()">
+      <div class="user-avatar" id="user-avatar">U</div>
+      <div><div class="user-name" id="user-name">User</div><div class="user-role">Sign out</div></div>
+    </div>
   </div>
 </aside>
+
 <div class="main">
   <div class="topbar">
     <div class="topbar-left"><h2>Products</h2><p>Manage your product catalogue and stock levels</p></div>
-    <div class="topbar-right"><button class="btn btn-primary" onclick="openModal()">+ Add Product</button></div>
+    <div class="topbar-right">
+      <button class="btn btn-primary" onclick="openModal()">+ Add Product</button>
+    </div>
   </div>
+
   <div class="page-body">
+
     <div class="table-card">
       <div class="table-header">
         <h3>All Products <span style="color:var(--text3);font-size:13px;font-weight:400;" id="product-count"></span></h3>
         <div class="table-actions">
           <div class="search-bar"><input type="text" placeholder="Search by name or SKU..." id="search-input" oninput="filterProducts()"/></div>
-          <select style="width:150px;padding:8px 12px;font-size:12px;" id="filter-cat" onchange="filterProducts()"><option value="">All categories</option><option>Raw Materials</option><option>Finished Goods</option><option>Packaging</option><option>Spare Parts</option></select>
-          <select style="width:140px;padding:8px 12px;font-size:12px;" id="filter-stock" onchange="filterProducts()"><option value="">All stock levels</option><option value="low">Low stock</option><option value="out">Out of stock</option><option value="ok">In stock</option></select>
+          <select style="width:150px;padding:8px 12px;font-size:12px;" id="filter-cat" onchange="filterProducts()">
+            <option value="">All categories</option>
+            <option>Raw Materials</option>
+            <option>Finished Goods</option>
+            <option>Packaging</option>
+            <option>Spare Parts</option>
+          </select>
+          <select style="width:140px;padding:8px 12px;font-size:12px;" id="filter-stock" onchange="filterProducts()">
+            <option value="">All stock levels</option>
+            <option value="low">Low stock</option>
+            <option value="out">Out of stock</option>
+            <option value="ok">In stock</option>
+          </select>
         </div>
       </div>
-      <table><thead><tr><th>Product</th><th>SKU</th><th>Category</th><th>Unit</th><th>In Stock</th><th>Reorder at</th><th>Status</th><th>Actions</th></tr></thead>
-      <tbody id="products-tbody"><tr><td colspan="8" style="text-align:center;padding:40px;color:var(--text3);">Loading products...</td></tr></tbody></table>
+
+      <table>
+        <thead>
+          <tr>
+            <th>Product</th>
+            <th>SKU</th>
+            <th>Category</th>
+            <th>Unit</th>
+            <th>In Stock</th>
+            <th>Reorder at</th>
+            <th>Status</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody id="products-tbody">
+          <tr><td colspan="8" style="text-align:center;padding:40px;color:var(--text3);">Loading products...</td></tr>
+        </tbody>
+      </table>
     </div>
   </div>
 </div>
+
+<!-- ADD PRODUCT MODAL -->
 <div class="modal-overlay" id="modal">
   <div class="modal">
-    <div class="modal-header"><h3 id="modal-title">Add Product</h3><button class="modal-close" onclick="closeModal()">✕</button></div>
-    <div style="display:grid;grid-template-columns:1fr 1fr;gap:0 16px;">
-      <div class="input-group" style="grid-column:1/-1"><label>Product Name *</label><input type="text" id="p-name" placeholder="e.g. Steel Rods"/></div>
-      <div class="input-group"><label>SKU / Code *</label><input type="text" id="p-sku" placeholder="e.g. STL-ROD-001"/></div>
-      <div class="input-group"><label>Category</label><select id="p-category"><option value="">Select category</option><option>Raw Materials</option><option>Finished Goods</option><option>Packaging</option><option>Spare Parts</option></select></div>
-      <div class="input-group"><label>Unit of Measure</label><select id="p-unit"><option>kg</option><option>g</option><option>litre</option><option>metre</option><option>pcs</option><option>box</option></select></div>
-      <div class="input-group"><label>Initial Stock</label><input type="number" id="p-stock" placeholder="0" min="0"/></div>
-      <div class="input-group"><label>Reorder Level</label><input type="number" id="p-reorder" placeholder="e.g. 20" min="0"/></div>
+    <div class="modal-header">
+      <h3 id="modal-title">Add Product</h3>
+      <button class="modal-close" onclick="closeModal()">✕</button>
     </div>
-    <div class="error-msg" id="modal-error" style="display:none;background:rgba(239,68,68,0.1);border:1px solid rgba(239,68,68,0.2);border-radius:8px;padding:10px 14px;font-size:13px;color:#FCA5A5;"></div>
-    <div class="modal-footer"><button class="btn btn-outline" onclick="closeModal()">Cancel</button><button class="btn btn-primary" onclick="saveProduct()">Save Product</button></div>
+
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:0 16px;">
+      <div class="input-group" style="grid-column:1/-1">
+        <label>Product Name *</label>
+        <input type="text" id="p-name" placeholder="e.g. Steel Rods"/>
+      </div>
+      <div class="input-group">
+        <label>SKU / Code *</label>
+        <input type="text" id="p-sku" placeholder="e.g. STL-ROD-001"/>
+      </div>
+      <div class="input-group">
+        <label>Category</label>
+        <select id="p-category">
+          <option value="">Select category</option>
+          <option>Raw Materials</option>
+          <option>Finished Goods</option>
+          <option>Packaging</option>
+          <option>Spare Parts</option>
+        </select>
+      </div>
+      <div class="input-group">
+        <label>Unit of Measure</label>
+        <select id="p-unit">
+          <option>kg</option><option>g</option><option>litre</option>
+          <option>metre</option><option>pcs</option><option>box</option>
+        </select>
+      </div>
+      <div class="input-group">
+        <label>Initial Stock</label>
+        <input type="number" id="p-stock" placeholder="0" min="0"/>
+      </div>
+      <div class="input-group">
+        <label>Reorder Level</label>
+        <input type="number" id="p-reorder" placeholder="e.g. 20" min="0"/>
+      </div>
+    </div>
+
+    <div class="error-msg" id="modal-error" style="display:none;background:rgba(239,68,68,0.1);border:1px solid rgba(239,68,68,0.2);border-radius:8px;padding:10px 14px;font-size:13px;color:#FCA5A5;margin-bottom:0;"></div>
+
+    <div class="modal-footer">
+      <button class="btn btn-outline" onclick="closeModal()">Cancel</button>
+      <button class="btn btn-primary" onclick="saveProduct()">Save Product</button>
+    </div>
   </div>
 </div>
+
 <script>
 const API='http://localhost:5000';
 const token=localStorage.getItem('ss_token');
-let allProducts=[],editingId=null;
+let allProducts=[], editingId=null;
+
 const DEMO_PRODUCTS=[
-  {id:1,name:'Steel Rods',sku:'STL-ROD-001',category:'Raw Materials',unit:'kg',quantity:97,reorder_level:20},
-  {id:2,name:'Copper Wire',sku:'CPR-WIR-002',category:'Raw Materials',unit:'metre',quantity:120,reorder_level:50},
-  {id:3,name:'Aluminium Sheets',sku:'ALU-SHT-003',category:'Raw Materials',unit:'kg',quantity:8,reorder_level:15},
-  {id:4,name:'Nut & Bolt Set',sku:'NBS-004',category:'Spare Parts',unit:'pcs',quantity:0,reorder_level:100},
-  {id:5,name:'Cardboard Boxes',sku:'PKG-BOX-005',category:'Packaging',unit:'pcs',quantity:340,reorder_level:50},
-  {id:6,name:'Steel Frames',sku:'STL-FRM-006',category:'Finished Goods',unit:'pcs',quantity:45,reorder_level:10},
-  {id:7,name:'Plastic Caps',sku:'PLT-CAP-007',category:'Packaging',unit:'pcs',quantity:5,reorder_level:30},
+  {id:1,name:'Steel Rods',       sku:'STL-ROD-001',category:'Raw Materials',  unit:'kg',  quantity:97,  reorder_level:20},
+  {id:2,name:'Copper Wire',      sku:'CPR-WIR-002',category:'Raw Materials',  unit:'metre',quantity:120,reorder_level:50},
+  {id:3,name:'Aluminium Sheets', sku:'ALU-SHT-003',category:'Raw Materials',  unit:'kg',  quantity:8,   reorder_level:15},
+  {id:4,name:'Nut & Bolt Set',   sku:'NBS-004',    category:'Spare Parts',    unit:'pcs', quantity:0,   reorder_level:100},
+  {id:5,name:'Cardboard Boxes',  sku:'PKG-BOX-005',category:'Packaging',      unit:'pcs', quantity:340, reorder_level:50},
+  {id:6,name:'Steel Frames',     sku:'STL-FRM-006',category:'Finished Goods', unit:'pcs', quantity:45,  reorder_level:10},
+  {id:7,name:'Plastic Caps',     sku:'PLT-CAP-007',category:'Packaging',      unit:'pcs', quantity:5,   reorder_level:30},
 ];
-function stockStatus(qty,reorder){if(qty===0)return{label:'Out of stock',cls:'badge-red'};if(qty<=reorder)return{label:'Low stock',cls:'badge-yellow'};return{label:'In stock',cls:'badge-green'};}
-function renderProducts(list){document.getElementById('product-count').textContent=`(${list.length})`;const tbody=document.getElementById('products-tbody');if(!list.length){tbody.innerHTML='<tr><td colspan="8" style="text-align:center;padding:40px;color:var(--text3)">No products found</td></tr>';return;}tbody.innerHTML=list.map(p=>{const s=stockStatus(p.quantity,p.reorder_level);const qtyColor=p.quantity===0?'#EF4444':p.quantity<=p.reorder_level?'#F59E0B':'#F1F5F9';return`<tr><td style="font-weight:500">${p.name}</td><td style="font-family:monospace;font-size:12px;color:var(--text2)">${p.sku}</td><td style="font-size:12px;color:var(--text2)">${p.category||'—'}</td><td style="color:var(--text3)">${p.unit}</td><td style="font-weight:600;color:${qtyColor};font-family:monospace">${p.quantity}</td><td style="color:var(--text3);font-family:monospace">${p.reorder_level}</td><td><span class="badge ${s.cls}">${s.label}</span></td><td><button class="btn btn-outline btn-sm" onclick="editProduct(${p.id})">Edit</button><button class="btn btn-danger btn-sm" style="margin-left:4px" onclick="deleteProduct(${p.id})">Delete</button></td></tr>`;}).join('');}
-function filterProducts(){const q=document.getElementById('search-input').value.toLowerCase();const cat=document.getElementById('filter-cat').value;const stock=document.getElementById('filter-stock').value;renderProducts(allProducts.filter(p=>{const matchQ=!q||p.name.toLowerCase().includes(q)||p.sku.toLowerCase().includes(q);const matchC=!cat||p.category===cat;const matchS=!stock||(stock==='out'&&p.quantity===0)||(stock==='low'&&p.quantity>0&&p.quantity<=p.reorder_level)||(stock==='ok'&&p.quantity>p.reorder_level);return matchQ&&matchC&&matchS;}));}
-async function loadProducts(){try{const res=await fetch(`${API}/api/products`,{headers:{'Authorization':'Bearer '+token}});allProducts=await res.json();}catch{allProducts=DEMO_PRODUCTS;}renderProducts(allProducts);}
-function openModal(){editingId=null;document.getElementById('modal-title').textContent='Add Product';clearForm();document.getElementById('modal').classList.add('open');}
-function closeModal(){document.getElementById('modal').classList.remove('open');}
-function clearForm(){['p-name','p-sku','p-stock','p-reorder'].forEach(id=>document.getElementById(id).value='');document.getElementById('p-category').value='';document.getElementById('modal-error').style.display='none';}
-function editProduct(id){const p=allProducts.find(x=>x.id===id);if(!p)return;editingId=id;document.getElementById('modal-title').textContent='Edit Product';document.getElementById('p-name').value=p.name;document.getElementById('p-sku').value=p.sku;document.getElementById('p-category').value=p.category||'';document.getElementById('p-unit').value=p.unit;document.getElementById('p-stock').value=p.quantity;document.getElementById('p-reorder').value=p.reorder_level;document.getElementById('modal').classList.add('open');}
-async function saveProduct(){const name=document.getElementById('p-name').value.trim();const sku=document.getElementById('p-sku').value.trim();const errEl=document.getElementById('modal-error');errEl.style.display='none';if(!name||!sku){errEl.textContent='Product name and SKU are required.';errEl.style.display='block';return;}const body={name,sku,category:document.getElementById('p-category').value,unit:document.getElementById('p-unit').value,quantity:parseInt(document.getElementById('p-stock').value)||0,reorder_level:parseInt(document.getElementById('p-reorder').value)||0};try{const method=editingId?'PUT':'POST';const url=editingId?`${API}/api/products/${editingId}`:`${API}/api/products`;const res=await fetch(url,{method,headers:{'Authorization':'Bearer '+token,'Content-Type':'application/json'},body:JSON.stringify(body)});if(res.ok){closeModal();loadProducts();}else{const d=await res.json();errEl.textContent=d.message||'Save failed.';errEl.style.display='block';}}catch{if(editingId){const i=allProducts.findIndex(x=>x.id===editingId);if(i>-1)allProducts[i]={...allProducts[i],...body};}else{allProducts.push({id:Date.now(),...body});}closeModal();renderProducts(allProducts);}}
-async function deleteProduct(id){if(!confirm('Delete this product?'))return;try{await fetch(`${API}/api/products/${id}`,{method:'DELETE',headers:{'Authorization':'Bearer '+token}});loadProducts();}catch{allProducts=allProducts.filter(p=>p.id!==id);renderProducts(allProducts);}}
+
+function stockStatus(qty, reorder){
+  if(qty===0) return {label:'Out of stock',cls:'badge-red'};
+  if(qty<=reorder) return {label:'Low stock',cls:'badge-yellow'};
+  return {label:'In stock',cls:'badge-green'};
+}
+
+function renderProducts(list){
+  document.getElementById('product-count').textContent=`(${list.length})`;
+  const tbody=document.getElementById('products-tbody');
+  if(!list.length){tbody.innerHTML='<tr><td colspan="8" style="text-align:center;padding:40px;color:var(--text3)">No products found</td></tr>';return;}
+  tbody.innerHTML=list.map(p=>{
+    const s=stockStatus(p.quantity,p.reorder_level);
+    const qtyColor=p.quantity===0?'#EF4444':p.quantity<=p.reorder_level?'#F59E0B':'#F1F5F9';
+    return `<tr>
+      <td style="font-weight:500">${p.name}</td>
+      <td style="font-family:monospace;font-size:12px;color:var(--text2)">${p.sku}</td>
+      <td><span style="font-size:12px;color:var(--text2)">${p.category||'—'}</span></td>
+      <td style="color:var(--text3)">${p.unit}</td>
+      <td style="font-weight:600;color:${qtyColor};font-family:monospace">${p.quantity}</td>
+      <td style="color:var(--text3);font-family:monospace">${p.reorder_level}</td>
+      <td><span class="badge ${s.cls}">${s.label}</span></td>
+      <td>
+        <button class="btn btn-outline btn-sm" onclick="editProduct(${p.id})">Edit</button>
+        <button class="btn btn-danger btn-sm" style="margin-left:4px" onclick="deleteProduct(${p.id})">Delete</button>
+      </td>
+    </tr>`;}).join('');
+}
+
+function filterProducts(){
+  const q=document.getElementById('search-input').value.toLowerCase();
+  const cat=document.getElementById('filter-cat').value;
+  const stock=document.getElementById('filter-stock').value;
+  let list=allProducts.filter(p=>{
+    const matchQ=!q||p.name.toLowerCase().includes(q)||p.sku.toLowerCase().includes(q);
+    const matchC=!cat||p.category===cat;
+    const matchS=!stock||(stock==='out'&&p.quantity===0)||(stock==='low'&&p.quantity>0&&p.quantity<=p.reorder_level)||(stock==='ok'&&p.quantity>p.reorder_level);
+    return matchQ&&matchC&&matchS;
+  });
+  renderProducts(list);
+}
+
+async function loadProducts(){
+  try{
+    const res=await fetch(`${API}/api/products`,{headers:{'Authorization':'Bearer '+token}});
+    allProducts=await res.json();
+  } catch { allProducts=DEMO_PRODUCTS; }
+  renderProducts(allProducts);
+}
+
+function openModal(){ editingId=null; document.getElementById('modal-title').textContent='Add Product'; clearForm(); document.getElementById('modal').classList.add('open'); }
+function closeModal(){ document.getElementById('modal').classList.remove('open'); }
+function clearForm(){ ['p-name','p-sku','p-stock','p-reorder'].forEach(id=>document.getElementById(id).value=''); document.getElementById('p-category').value=''; document.getElementById('modal-error').style.display='none'; }
+
+function editProduct(id){
+  const p=allProducts.find(x=>x.id===id); if(!p) return;
+  editingId=id;
+  document.getElementById('modal-title').textContent='Edit Product';
+  document.getElementById('p-name').value=p.name;
+  document.getElementById('p-sku').value=p.sku;
+  document.getElementById('p-category').value=p.category||'';
+  document.getElementById('p-unit').value=p.unit;
+  document.getElementById('p-stock').value=p.quantity;
+  document.getElementById('p-reorder').value=p.reorder_level;
+  document.getElementById('modal').classList.add('open');
+}
+
+async function saveProduct(){
+  const name=document.getElementById('p-name').value.trim();
+  const sku=document.getElementById('p-sku').value.trim();
+  const errEl=document.getElementById('modal-error');
+  errEl.style.display='none';
+  if(!name||!sku){errEl.textContent='Product name and SKU are required.';errEl.style.display='block';return;}
+  const body={name,sku,category:document.getElementById('p-category').value,unit:document.getElementById('p-unit').value,quantity:parseInt(document.getElementById('p-stock').value)||0,reorder_level:parseInt(document.getElementById('p-reorder').value)||0};
+  try{
+    const method=editingId?'PUT':'POST';
+    const url=editingId?`${API}/api/products/${editingId}`:`${API}/api/products`;
+    const res=await fetch(url,{method,headers:{'Authorization':'Bearer '+token,'Content-Type':'application/json'},body:JSON.stringify(body)});
+    if(res.ok){closeModal();loadProducts();}
+    else{const d=await res.json();errEl.textContent=d.message||'Save failed.';errEl.style.display='block';}
+  } catch {
+    /* demo */
+    if(editingId){const i=allProducts.findIndex(x=>x.id===editingId);if(i>-1)allProducts[i]={...allProducts[i],...body};}
+    else{allProducts.push({id:Date.now(),...body});}
+    closeModal();renderProducts(allProducts);
+  }
+}
+
+async function deleteProduct(id){
+  if(!confirm('Delete this product?')) return;
+  try{
+    await fetch(`${API}/api/products/${id}`,{method:'DELETE',headers:{'Authorization':'Bearer '+token}});
+    loadProducts();
+  } catch { allProducts=allProducts.filter(p=>p.id!==id); renderProducts(allProducts); }
+}
+
 function logout(){localStorage.clear();window.location.href='login.html';}
 const user=JSON.parse(localStorage.getItem('ss_user')||'{}');
 if(user.name){document.getElementById('user-name').textContent=user.name;document.getElementById('user-avatar').textContent=user.name[0].toUpperCase();}

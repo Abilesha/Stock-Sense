@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>StockSense — Adjustments</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet"/>
+<link rel="stylesheet" href="style.css"/>
+</head>
+<body>
+
+<aside class="sidebar">
+  <div class="sidebar-logo"><div class="logo-mark"><div class="logo-icon">📦</div><div class="logo-text">Stock<span>Sense</span></div></div></div>
+  <div class="nav-section-label">Main</div>
+  <a href="dashboard.html" class="nav-item"><span class="nav-icon">📊</span> Dashboard</a>
+  <a href="products.html"  class="nav-item"><span class="nav-icon">📦</span> Products</a>
+  <div class="nav-section-label">Operations</div>
+  <a href="receipts.html"   class="nav-item"><span class="nav-icon">📥</span> Receipts</a>
+  <a href="deliveries.html" class="nav-item"><span class="nav-icon">📤</span> Deliveries</a>
+  <a href="transfers.html"  class="nav-item"><span class="nav-icon">🔄</span> Transfers</a>
+  <a href="adjustments.html"class="nav-item active"><span class="nav-icon">⚖️</span> Adjustments</a>
+  <div class="nav-section-label">Reports</div>
+  <a href="#" class="nav-item"><span class="nav-icon">📈</span> Stock Ledger</a>
+  <a href="#" class="nav-item"><span class="nav-icon">⚙️</span> Settings</a>
+  <div class="sidebar-bottom">
+    <div class="user-pill" onclick="logout()"><div class="user-avatar" id="user-avatar">U</div><div><div class="user-name" id="user-name">User</div><div class="user-role">Sign out</div></div></div>
+  </div>
+</aside>
+
+<div class="main">
+  <div class="topbar">
+    <div class="topbar-left"><h2>Stock Adjustments</h2><p>Fix mismatches between recorded and physical stock counts</p></div>
+    <div class="topbar-right"><button class="btn btn-primary" onclick="openModal()">+ New Adjustment</button></div>
+  </div>
+  <div class="page-body">
+
+    <div class="alert alert-yellow">⚠️ Stock adjustments directly modify inventory levels. Use only when physical count differs from system count.</div>
+
+    <div class="table-card">
+      <div class="table-header"><h3>Adjustment History</h3></div>
+      <table>
+        <thead><tr><th>Reference</th><th>Product</th><th>Location</th><th>System Qty</th><th>Counted Qty</th><th>Difference</th><th>Reason</th><th>Date</th></tr></thead>
+        <tbody id="adj-tbody"><tr><td colspan="8" style="text-align:center;padding:40px;color:var(--text3)">Loading...</td></tr></tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL -->
+<div class="modal-overlay" id="modal">
+  <div class="modal">
+    <div class="modal-header"><h3>New Stock Adjustment</h3><button class="modal-close" onclick="closeModal()">✕</button></div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:0 16px">
+      <div class="input-group"><label>Product *</label><select id="a-product"><option value="">Select product</option></select></div>
+      <div class="input-group"><label>Location</label><select id="a-location"><option>Main Warehouse</option><option>Production Floor</option><option>Rack A</option><option>Rack B</option></select></div>
+      <div class="input-group"><label>System Qty (current)</label><input type="number" id="a-system" placeholder="Auto-filled" readonly style="opacity:0.6"/></div>
+      <div class="input-group"><label>Counted Qty (physical) *</label><input type="number" id="a-counted" placeholder="What you counted" min="0" oninput="calcDiff()"/></div>
+    </div>
+    <div id="diff-preview" style="display:none;border-radius:8px;padding:10px 14px;font-size:13px;margin-bottom:14px;"></div>
+    <div class="input-group"><label>Reason *</label>
+      <select id="a-reason">
+        <option value="">Select reason</option>
+        <option>Damaged goods</option><option>Theft / shrinkage</option>
+        <option>Counting error correction</option><option>Found unregistered stock</option><option>Other</option>
+      </select>
+    </div>
+    <div class="input-group"><label>Notes</label><textarea id="a-notes" rows="2" placeholder="Additional details..."></textarea></div>
+    <div class="error-msg" id="modal-error" style="display:none;background:rgba(239,68,68,0.1);border:1px solid rgba(239,68,68,0.2);border-radius:8px;padding:10px 14px;font-size:13px;color:#FCA5A5;margin-top:0"></div>
+    <div class="modal-footer">
+      <button class="btn btn-outline" onclick="closeModal()">Cancel</button>
+      <button class="btn btn-primary" onclick="saveAdjustment()">Apply Adjustment</button>
+    </div>
+  </div>
+</div>
+
+<script>
+const API='http://localhost:5000';
+const token=localStorage.getItem('ss_token');
+
+const DEMO_PRODUCTS=[
+  {id:1,name:'Steel Rods',quantity:97},{id:2,name:'Copper Wire',quantity:120},
+  {id:3,name:'Aluminium Sheets',quantity:8},{id:4,name:'Nut & Bolt Set',quantity:0},
+  {id:5,name:'Cardboard Boxes',quantity:340},{id:7,name:'Plastic Caps',quantity:5},
+];
+
+const DEMO_ADJ=[
+  {ref:'ADJ-001',product:'Steel Rods',location:'Main Warehouse',system:100,counted:97,diff:-3,reason:'Damaged goods',date:'2026-09-26 15:00'},
+  {ref:'ADJ-002',product:'Cardboard Boxes',location:'Rack A',system:330,counted:340,diff:+10,reason:'Found unregistered stock',date:'2026-09-25 10:00'},
+  {ref:'ADJ-003',product:'Plastic Caps',location:'Main Warehouse',system:20,counted:5,diff:-15,reason:'Theft / shrinkage',date:'2026-09-24 14:30'},
+];
+
+function renderAdj(list){
+  const tbody=document.getElementById('adj-tbody');
+  if(!list.length){tbody.innerHTML='<tr><td colspan="8" style="text-align:center;padding:40px;color:var(--text3)">No adjustments yet</td></tr>';return;}
+  tbody.innerHTML=list.map(a=>{
+    const diffColor=a.diff>0?'#10B981':a.diff<0?'#EF4444':'#94A3B8';
+    const diffStr=(a.diff>0?'+':'')+a.diff;
+    return `<tr>
+      <td style="font-family:monospace;font-size:12px;color:var(--text2)">${a.ref}</td>
+      <td style="font-weight:500">${a.product}</td>
+      <td style="color:var(--text3)">${a.location}</td>
+      <td style="font-family:monospace">${a.system}</td>
+      <td style="font-family:monospace">${a.counted}</td>
+      <td style="font-family:monospace;font-weight:700;color:${diffColor}">${diffStr}</td>
+      <td style="font-size:12px;color:var(--text2)">${a.reason}</td>
+      <td style="color:var(--text3);font-size:12px">${a.date}</td>
+    </tr>`;}).join('');
+}
+
+let adjustments=[];
+
+async function loadAdjustments(){
+  try{
+    const res=await fetch(`${API}/api/adjustments`,{headers:{'Authorization':'Bearer '+token}});
+    adjustments=await res.json();
+  } catch { adjustments=DEMO_ADJ; }
+  renderAdj(adjustments);
+}
+
+function populateProducts(){
+  const sel=document.getElementById('a-product');
+  DEMO_PRODUCTS.forEach(p=>{const o=document.createElement('option');o.value=p.id;o.textContent=p.name;o.dataset.qty=p.quantity;sel.appendChild(o);});
+  sel.addEventListener('change',function(){
+    const opt=this.options[this.selectedIndex];
+    document.getElementById('a-system').value=opt.dataset.qty||'';
+    calcDiff();
+  });
+}
+
+function calcDiff(){
+  const system=parseInt(document.getElementById('a-system').value)||0;
+  const counted=parseInt(document.getElementById('a-counted').value);
+  const preview=document.getElementById('diff-preview');
+  if(isNaN(counted)){preview.style.display='none';return;}
+  const diff=counted-system;
+  if(diff===0){preview.style.display='none';return;}
+  const isPos=diff>0;
+  preview.style.display='block';
+  preview.style.background=isPos?'rgba(16,185,129,0.1)':'rgba(239,68,68,0.1)';
+  preview.style.border=`1px solid ${isPos?'rgba(16,185,129,0.2)':'rgba(239,68,68,0.2)'}`;
+  preview.style.color=isPos?'#6EE7B7':'#FCA5A5';
+  preview.textContent=`${isPos?'📈 Stock will increase by +':'📉 Stock will decrease by '}${Math.abs(diff)} units after applying this adjustment.`;
+}
+
+function openModal(){ clearForm(); document.getElementById('modal').classList.add('open'); }
+function closeModal(){ document.getElementById('modal').classList.remove('open'); }
+function clearForm(){ ['a-counted','a-notes'].forEach(id=>document.getElementById(id).value=''); document.getElementById('a-system').value=''; document.getElementById('a-product').value=''; document.getElementById('a-reason').value=''; document.getElementById('diff-preview').style.display='none'; document.getElementById('modal-error').style.display='none'; }
+
+async function saveAdjustment(){
+  const productEl=document.getElementById('a-product');
+  const product=productEl.options[productEl.selectedIndex]?.text||'';
+  const counted=parseInt(document.getElementById('a-counted').value);
+  const system=parseInt(document.getElementById('a-system').value)||0;
+  const reason=document.getElementById('a-reason').value;
+  const errEl=document.getElementById('modal-error');
+  errEl.style.display='none';
+  if(!product||isNaN(counted)||!reason){errEl.textContent='Fill all required fields.';errEl.style.display='block';return;}
+  const body={product,location:document.getElementById('a-location').value,system_qty:system,counted_qty:counted,reason,notes:document.getElementById('a-notes').value};
+  try{
+    const res=await fetch(`${API}/api/adjustments`,{method:'POST',headers:{'Authorization':'Bearer '+token,'Content-Type':'application/json'},body:JSON.stringify(body)});
+    if(res.ok){closeModal();loadAdjustments();}
+    else{const d=await res.json();errEl.textContent=d.message||'Failed.';errEl.style.display='block';}
+  } catch {
+    const newA={ref:'ADJ-'+(adjustments.length+1).toString().padStart(3,'0'),product,location:document.getElementById('a-location').value,system,counted,diff:counted-system,reason,date:new Date().toLocaleString()};
+    adjustments.unshift(newA); closeModal(); renderAdj(adjustments);
+  }
+}
+
+function logout(){localStorage.clear();window.location.href='login.html';}
+const user=JSON.parse(localStorage.getItem('ss_user')||'{}');
+if(user.name){document.getElementById('user-name').textContent=user.name;document.getElementById('user-avatar').textContent=user.name[0].toUpperCase();}
+populateProducts(); loadAdjustments();
+</script>
+</body>
+</html>

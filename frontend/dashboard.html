@@ -7,87 +7,223 @@
 <link rel="stylesheet" href="style.css"/>
 </head>
 <body>
+
+<!-- SIDEBAR -->
 <aside class="sidebar">
-  <div class="sidebar-logo"><div class="logo-mark"><div class="logo-icon">📦</div><div class="logo-text">Stock<span>Sense</span></div></div></div>
+  <div class="sidebar-logo">
+    <div class="logo-mark">
+      <div class="logo-icon">📦</div>
+      <div class="logo-text">Stock<span>Sense</span></div>
+    </div>
+  </div>
   <div class="nav-section-label">Main</div>
   <a href="dashboard.html" class="nav-item active"><span class="nav-icon">📊</span> Dashboard</a>
-  <a href="products.html" class="nav-item"><span class="nav-icon">📦</span> Products</a>
+  <a href="products.html"  class="nav-item"><span class="nav-icon">📦</span> Products</a>
   <div class="nav-section-label">Operations</div>
-  <a href="receipts.html" class="nav-item"><span class="nav-icon">📥</span> Receipts <span class="nav-badge" id="pending-receipts-badge">3</span></a>
+  <a href="receipts.html"   class="nav-item"><span class="nav-icon">📥</span> Receipts <span class="nav-badge" id="pending-receipts-badge">3</span></a>
   <a href="deliveries.html" class="nav-item"><span class="nav-icon">📤</span> Deliveries</a>
-  <a href="transfers.html" class="nav-item"><span class="nav-icon">🔄</span> Transfers</a>
-  <a href="adjustments.html" class="nav-item"><span class="nav-icon">⚖️</span> Adjustments</a>
+  <a href="transfers.html"  class="nav-item"><span class="nav-icon">🔄</span> Transfers</a>
+  <a href="adjustments.html"class="nav-item"><span class="nav-icon">⚖️</span> Adjustments</a>
   <div class="nav-section-label">Reports</div>
   <a href="#" class="nav-item"><span class="nav-icon">📈</span> Stock Ledger</a>
   <a href="#" class="nav-item"><span class="nav-icon">⚙️</span> Settings</a>
   <div class="sidebar-bottom">
-    <div class="user-pill" onclick="logout()"><div class="user-avatar" id="user-avatar">U</div><div><div class="user-name" id="user-name">User</div><div class="user-role">Sign out</div></div></div>
+    <div class="user-pill" onclick="logout()">
+      <div class="user-avatar" id="user-avatar">U</div>
+      <div>
+        <div class="user-name" id="user-name">User</div>
+        <div class="user-role">Sign out</div>
+      </div>
+    </div>
   </div>
 </aside>
+
+<!-- MAIN -->
 <div class="main">
   <div class="topbar">
-    <div class="topbar-left"><h2>Dashboard</h2><p id="today-date">Loading...</p></div>
-    <div class="topbar-right"><div class="icon-btn">🔔</div><div class="icon-btn" onclick="loadData()">🔄</div></div>
+    <div class="topbar-left">
+      <h2>Dashboard</h2>
+      <p id="today-date">Loading...</p>
+    </div>
+    <div class="topbar-right">
+      <div class="icon-btn" title="Notifications">🔔</div>
+      <div class="icon-btn" title="Refresh" onclick="loadData()">🔄</div>
+    </div>
   </div>
+
   <div class="page-body">
-    <div class="alert alert-red" id="low-stock-alert" style="display:none">⚠️ <strong id="low-stock-count">0</strong> items are running low on stock. <a href="products.html" style="color:#FCA5A5;text-decoration:underline;margin-left:4px;">View products →</a></div>
+
+    <!-- LOW STOCK ALERT -->
+    <div class="alert alert-red" id="low-stock-alert" style="display:none">
+      ⚠️ <strong id="low-stock-count">0</strong> items are running low on stock. <a href="products.html" style="color:#FCA5A5;text-decoration:underline;margin-left:4px;">View products →</a>
+    </div>
+
+    <!-- KPI CARDS -->
     <div class="stats-grid">
-      <div class="stat-card"><div class="stat-top"><div class="stat-label">Total Products</div><div class="stat-icon" style="background:rgba(59,130,246,0.12)">📦</div></div><div class="stat-value" id="kpi-products">—</div><div class="stat-change neutral" id="kpi-products-sub">Loading...</div></div>
-      <div class="stat-card"><div class="stat-top"><div class="stat-label">Low / Out of Stock</div><div class="stat-icon" style="background:rgba(239,68,68,0.12)">⚠️</div></div><div class="stat-value" style="color:#EF4444" id="kpi-low">—</div><div class="stat-change down" id="kpi-low-sub">Loading...</div></div>
-      <div class="stat-card"><div class="stat-top"><div class="stat-label">Pending Receipts</div><div class="stat-icon" style="background:rgba(245,158,11,0.12)">📥</div></div><div class="stat-value" style="color:#F59E0B" id="kpi-receipts">—</div><div class="stat-change neutral" id="kpi-receipts-sub">Loading...</div></div>
-      <div class="stat-card"><div class="stat-top"><div class="stat-label">Pending Deliveries</div><div class="stat-icon" style="background:rgba(16,185,129,0.12)">📤</div></div><div class="stat-value" style="color:#10B981" id="kpi-deliveries">—</div><div class="stat-change up" id="kpi-deliveries-sub">Loading...</div></div>
-      <div class="stat-card"><div class="stat-top"><div class="stat-label">Internal Transfers</div><div class="stat-icon" style="background:rgba(139,92,246,0.12)">🔄</div></div><div class="stat-value" style="color:#8B5CF6" id="kpi-transfers">—</div><div class="stat-change neutral">Scheduled today</div></div>
+      <div class="stat-card">
+        <div class="stat-top">
+          <div class="stat-label">Total Products</div>
+          <div class="stat-icon" style="background:rgba(59,130,246,0.12)">📦</div>
+        </div>
+        <div class="stat-value" id="kpi-products">—</div>
+        <div class="stat-change neutral" id="kpi-products-sub">Loading...</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-top">
+          <div class="stat-label">Low / Out of Stock</div>
+          <div class="stat-icon" style="background:rgba(239,68,68,0.12)">⚠️</div>
+        </div>
+        <div class="stat-value" style="color:#EF4444" id="kpi-low">—</div>
+        <div class="stat-change down" id="kpi-low-sub">Loading...</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-top">
+          <div class="stat-label">Pending Receipts</div>
+          <div class="stat-icon" style="background:rgba(245,158,11,0.12)">📥</div>
+        </div>
+        <div class="stat-value" style="color:#F59E0B" id="kpi-receipts">—</div>
+        <div class="stat-change neutral" id="kpi-receipts-sub">Loading...</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-top">
+          <div class="stat-label">Pending Deliveries</div>
+          <div class="stat-icon" style="background:rgba(16,185,129,0.12)">📤</div>
+        </div>
+        <div class="stat-value" style="color:#10B981" id="kpi-deliveries">—</div>
+        <div class="stat-change up" id="kpi-deliveries-sub">Loading...</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-top">
+          <div class="stat-label">Internal Transfers</div>
+          <div class="stat-icon" style="background:rgba(139,92,246,0.12)">🔄</div>
+        </div>
+        <div class="stat-value" style="color:#8B5CF6" id="kpi-transfers">—</div>
+        <div class="stat-change neutral">Scheduled today</div>
+      </div>
     </div>
+
+    <!-- RECENT ACTIVITY TABLE -->
     <div class="table-card">
-      <div class="table-header"><h3>Recent Stock Movements</h3><div class="table-actions"><select style="width:160px;padding:8px 12px;font-size:12px;" id="filter-type" onchange="filterTable()"><option value="">All types</option><option value="Receipt">Receipts</option><option value="Delivery">Deliveries</option><option value="Transfer">Transfers</option><option value="Adjustment">Adjustments</option></select></div></div>
-      <table><thead><tr><th>Reference</th><th>Type</th><th>Product</th><th>Qty</th><th>Date</th><th>Status</th></tr></thead>
-      <tbody id="movements-tbody"><tr><td colspan="6" style="text-align:center;padding:40px;color:var(--text3);">Loading movements...</td></tr></tbody></table>
+      <div class="table-header">
+        <h3>Recent Stock Movements</h3>
+        <div class="table-actions">
+          <select style="width:160px;padding:8px 12px;font-size:12px;" id="filter-type" onchange="filterTable()">
+            <option value="">All types</option>
+            <option value="Receipt">Receipts</option>
+            <option value="Delivery">Deliveries</option>
+            <option value="Transfer">Transfers</option>
+            <option value="Adjustment">Adjustments</option>
+          </select>
+        </div>
+      </div>
+      <table>
+        <thead>
+          <tr>
+            <th>Reference</th>
+            <th>Type</th>
+            <th>Product</th>
+            <th>Qty</th>
+            <th>Date</th>
+            <th>Status</th>
+          </tr>
+        </thead>
+        <tbody id="movements-tbody">
+          <tr><td colspan="6" style="text-align:center;padding:40px;color:var(--text3);">Loading movements...</td></tr>
+        </tbody>
+      </table>
     </div>
+
   </div>
 </div>
+
 <script>
-const API='http://localhost:5000';
-const token=localStorage.getItem('ss_token');
-const DEMO={products:48,lowStock:5,outStock:2,receipts:3,deliveries:7,transfers:2,movements:[
-  {ref:'RCT-001',type:'Receipt',product:'Steel Rods',qty:'+100 kg',date:'Today 09:14',status:'Done'},
-  {ref:'DLV-012',type:'Delivery',product:'Steel Frames',qty:'-20 kg',date:'Today 10:30',status:'Done'},
-  {ref:'TRF-004',type:'Transfer',product:'Aluminium',qty:'50 kg',date:'Today 11:00',status:'In Transit'},
-  {ref:'RCT-002',type:'Receipt',product:'Copper Wire',qty:'+200 m',date:'Yesterday',status:'Pending'},
-  {ref:'ADJ-009',type:'Adjustment',product:'Steel Rods',qty:'-3 kg',date:'Yesterday',status:'Done'},
-  {ref:'DLV-013',type:'Delivery',product:'Copper Wire',qty:'-80 m',date:'2 days ago',status:'Pending'},
-  {ref:'RCT-003',type:'Receipt',product:'Nuts & Bolts',qty:'+500 pcs',date:'2 days ago',status:'Done'},
-]};
-const STATUS_COLORS={Done:'badge-green','In Transit':'badge-blue',Pending:'badge-yellow',Cancelled:'badge-red'};
-const TYPE_COLORS={Receipt:'badge-blue',Delivery:'badge-green',Transfer:'badge-blue',Adjustment:'badge-yellow'};
-let allMovements=[];
-function setKPI(id,val,sub,subClass){document.getElementById(id).textContent=val;const subEl=document.getElementById(id+'-sub');if(subEl){subEl.textContent=sub;subEl.className='stat-change '+(subClass||'neutral');}}
-function renderMovements(list){const tbody=document.getElementById('movements-tbody');if(!list.length){tbody.innerHTML='<tr><td colspan="6" style="text-align:center;padding:40px;color:var(--text3);">No movements found</td></tr>';return;}tbody.innerHTML=list.map(m=>`<tr><td style="font-family:monospace;font-size:12px;color:var(--text2)">${m.ref}</td><td><span class="badge ${TYPE_COLORS[m.type]||'badge-blue'}">${m.type}</span></td><td style="font-weight:500">${m.product}</td><td style="font-family:monospace;font-size:13px">${m.qty}</td><td style="color:var(--text3);font-size:12px">${m.date}</td><td><span class="badge ${STATUS_COLORS[m.status]||'badge-yellow'}">${m.status}</span></td></tr>`).join('');}
-function filterTable(){const type=document.getElementById('filter-type').value;renderMovements(type?allMovements.filter(m=>m.type===type):allMovements);}
-async function loadData(){
-  try{
-    const headers={'Authorization':'Bearer '+token,'Content-Type':'application/json'};
-    const [prodRes,movRes]=await Promise.all([fetch(`${API}/api/products`,{headers}),fetch(`${API}/api/movements`,{headers})]);
-    const products=await prodRes.json();const movements=await movRes.json();
-    const low=products.filter(p=>p.quantity>0&&p.quantity<=p.reorder_level).length;
-    const out=products.filter(p=>p.quantity===0).length;
-    setKPI('kpi-products',products.length,'Across all warehouses');
-    setKPI('kpi-low',low+' / '+out,out+' fully out of stock','down');
-    allMovements=movements;renderMovements(movements);
-    if(low+out>0){document.getElementById('low-stock-alert').style.display='flex';document.getElementById('low-stock-count').textContent=low+out;}
+const API = 'http://localhost:5000';
+const token = localStorage.getItem('ss_token');
+
+/* Demo data used when backend isn't running */
+const DEMO = {
+  products: 48, lowStock: 5, outStock: 2,
+  receipts: 3, deliveries: 7, transfers: 2,
+  movements: [
+    {ref:'RCT-001',type:'Receipt',   product:'Steel Rods',   qty:'+100 kg', date:'Today 09:14',  status:'Done'},
+    {ref:'DLV-012',type:'Delivery',  product:'Steel Frames', qty:'-20 kg',  date:'Today 10:30',  status:'Done'},
+    {ref:'TRF-004',type:'Transfer',  product:'Aluminium',    qty:'50 kg',   date:'Today 11:00',  status:'In Transit'},
+    {ref:'RCT-002',type:'Receipt',   product:'Copper Wire',  qty:'+200 m',  date:'Yesterday',    status:'Pending'},
+    {ref:'ADJ-009',type:'Adjustment',product:'Steel Rods',   qty:'-3 kg',   date:'Yesterday',    status:'Done'},
+    {ref:'DLV-013',type:'Delivery',  product:'Copper Wire',  qty:'-80 m',   date:'2 days ago',   status:'Pending'},
+    {ref:'RCT-003',type:'Receipt',   product:'Nuts & Bolts', qty:'+500 pcs',date:'2 days ago',   status:'Done'},
+  ]
+};
+
+const STATUS_COLORS = {Done:'badge-green','In Transit':'badge-blue',Pending:'badge-yellow',Cancelled:'badge-red'};
+const TYPE_COLORS   = {Receipt:'badge-blue',Delivery:'badge-green',Transfer:'badge-blue',Adjustment:'badge-yellow'};
+
+let allMovements = [];
+
+function setKPI(id, val, sub, subClass) {
+  document.getElementById(id).textContent = val;
+  const subEl = document.getElementById(id+'-sub');
+  if(subEl){ subEl.textContent = sub; subEl.className='stat-change '+(subClass||'neutral'); }
+}
+
+function renderMovements(list) {
+  const tbody = document.getElementById('movements-tbody');
+  if(!list.length){ tbody.innerHTML='<tr><td colspan="6" style="text-align:center;padding:40px;color:var(--text3);">No movements found</td></tr>'; return; }
+  tbody.innerHTML = list.map(m=>`
+    <tr>
+      <td style="font-family:monospace;font-size:12px;color:var(--text2)">${m.ref}</td>
+      <td><span class="badge ${TYPE_COLORS[m.type]||'badge-blue'}">${m.type}</span></td>
+      <td style="font-weight:500">${m.product}</td>
+      <td style="font-family:monospace;font-size:13px">${m.qty}</td>
+      <td style="color:var(--text3);font-size:12px">${m.date}</td>
+      <td><span class="badge ${STATUS_COLORS[m.status]||'badge-yellow'}">${m.status}</span></td>
+    </tr>`).join('');
+}
+
+function filterTable() {
+  const type = document.getElementById('filter-type').value;
+  renderMovements(type ? allMovements.filter(m=>m.type===type) : allMovements);
+}
+
+async function loadData() {
+  try {
+    const headers = {'Authorization':'Bearer '+token,'Content-Type':'application/json'};
+    const [prodRes, movRes] = await Promise.all([
+      fetch(`${API}/api/products`,  {headers}),
+      fetch(`${API}/api/movements`, {headers})
+    ]);
+    const products  = await prodRes.json();
+    const movements = await movRes.json();
+    const low = products.filter(p=>p.quantity>0&&p.quantity<=p.reorder_level).length;
+    const out = products.filter(p=>p.quantity===0).length;
+    setKPI('kpi-products',  products.length, 'Across all warehouses');
+    setKPI('kpi-low',       low+' / '+out,   out+' fully out of stock','down');
+    allMovements = movements;
+    renderMovements(movements);
+    if(low+out>0){ document.getElementById('low-stock-alert').style.display='flex'; document.getElementById('low-stock-count').textContent=low+out; }
   } catch {
-    setKPI('kpi-products',DEMO.products,'Across all warehouses');
-    setKPI('kpi-low',DEMO.lowStock+' / '+DEMO.outStock,DEMO.outStock+' fully out of stock','down');
-    setKPI('kpi-receipts',DEMO.receipts,'Awaiting validation','neutral');
+    /* demo fallback */
+    setKPI('kpi-products',  DEMO.products,  'Across all warehouses');
+    setKPI('kpi-low',       DEMO.lowStock+' / '+DEMO.outStock, DEMO.outStock+' fully out of stock','down');
+    setKPI('kpi-receipts',  DEMO.receipts,  'Awaiting validation','neutral');
     setKPI('kpi-deliveries',DEMO.deliveries,'Ready to ship','up');
-    setKPI('kpi-transfers',DEMO.transfers,'Scheduled today');
-    if(DEMO.lowStock>0){document.getElementById('low-stock-alert').style.display='flex';document.getElementById('low-stock-count').textContent=DEMO.lowStock+DEMO.outStock;}
-    allMovements=DEMO.movements;renderMovements(DEMO.movements);
+    setKPI('kpi-transfers', DEMO.transfers, 'Scheduled today');
+    if(DEMO.lowStock>0){ document.getElementById('low-stock-alert').style.display='flex'; document.getElementById('low-stock-count').textContent=DEMO.lowStock+DEMO.outStock; }
+    allMovements = DEMO.movements;
+    renderMovements(DEMO.movements);
   }
 }
-function logout(){localStorage.removeItem('ss_token');localStorage.removeItem('ss_user');window.location.href='login.html';}
-const user=JSON.parse(localStorage.getItem('ss_user')||'{}');
-if(user.name){document.getElementById('user-name').textContent=user.name;document.getElementById('user-avatar').textContent=user.name[0].toUpperCase();}
-document.getElementById('today-date').textContent=new Date().toLocaleDateString('en-IN',{weekday:'long',year:'numeric',month:'long',day:'numeric'});
+
+function logout() {
+  localStorage.removeItem('ss_token');
+  localStorage.removeItem('ss_user');
+  window.location.href='login.html';
+}
+
+/* Init */
+const user = JSON.parse(localStorage.getItem('ss_user')||'{}');
+if(user.name){ document.getElementById('user-name').textContent=user.name; document.getElementById('user-avatar').textContent=user.name[0].toUpperCase(); }
+document.getElementById('today-date').textContent = new Date().toLocaleDateString('en-IN',{weekday:'long',year:'numeric',month:'long',day:'numeric'});
 loadData();
 </script>
 </body>
